@@ -47,8 +47,10 @@ public class PaketLayananService {
     }
     private void mapColumn()
     {
-        mapColumnSearch.put("id","ID PELANGGAN");
-        mapColumnSearch.put("nama","NAMA PELANGGAN");
+        mapColumnSearch.put("id","ID LIST HARGA");
+        mapColumnSearch.put("nama","NAMA PAKET");
+        mapColumnSearch.put("harga","HARGA PERKILO");
+        mapColumnSearch.put("tipe","TIPE LAYANAN");
     }
 
     public Map<String, Object> savePaketLayanan(PaketLayanan paketLayanan, WebRequest request) {
@@ -101,9 +103,9 @@ public class PaketLayananService {
                         null,
                         "FV05003",request);
             }
-            nextPaketLayanan.setTipeLayanan(paketLayanan.getTipeLayanan());
             nextPaketLayanan.setNamaPaket(paketLayanan.getNamaPaket());
             nextPaketLayanan.setHargaPerKilo(paketLayanan.getHargaPerKilo());
+            nextPaketLayanan.setTipeLayanan(paketLayanan.getTipeLayanan());
             nextPaketLayanan.setModifiedBy(Integer.parseInt(strUserIdz.toString()));
             nextPaketLayanan.setModifiedDate(new Date());
 
@@ -383,13 +385,13 @@ public class PaketLayananService {
     {
         if(paramValue.equals("") || paramValue==null)
         {
-            return paketLayananRepo.findByIsDelete(pageable,(byte) 1);
-        }
-        if(paramColumn.equals("id"))
-        {
             return paketLayananRepo.findByIsDeleteAndIdListHarga(pageable,(byte) 1,Long.parseLong(paramValue));
         } else if (paramColumn.equals("nama")) {
             return paketLayananRepo.findByIsDeleteAndNamaPaketContainsIgnoreCase(pageable,(byte) 1,paramValue);
+        }  else if (paramColumn.equals("harga")) {
+            return paketLayananRepo.findByIsDeleteAndHarga(pageable, (byte) 1, paramValue);
+        }  else if (paramColumn.equals("tipe")) {
+            return paketLayananRepo.findByIsDeleteAndTipeLayananContainsIgnoreCase(pageable, (byte) 1, paramValue);
         }
 
         return paketLayananRepo.findByIsDelete(pageable,(byte) 1);// ini default kalau parameter search nya tidak sesuai--- asumsi nya di hit bukan dari web
