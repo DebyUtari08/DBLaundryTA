@@ -14,7 +14,7 @@ public interface PaketLayananRepo extends JpaRepository<PaketLayanan,Long> {
 
     List<PaketLayanan> findByIsDelete(byte byteIsDelete);
     Page<PaketLayanan> findByIsDeleteAndNamaPaketContainsIgnoreCase(Pageable page , byte byteIsDelete, String values);
-    Page<PaketLayanan> findByIsDeleteAndHarga(Pageable page , byte byteIsDelete, Double values);
+
     Page<PaketLayanan> findByIsDeleteAndTipeLayananContainsIgnoreCase(Pageable page , byte byteIsDelete, String values);
     Page<PaketLayanan> findByIsDeleteAndIdListHarga(Pageable page , byte byteIsDelete, Long values);
 }

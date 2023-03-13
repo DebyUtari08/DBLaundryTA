@@ -228,7 +228,7 @@ public class PaketLayananController {
         model.addAttribute("columnFirst","");
         model.addAttribute("valueFirst","");
         model.addAttribute("sizeComponent",5);
-        return "/paketLayanan/paketLayanan";
+        return "paketLayanan/paketLayanan";
     }
 
     @GetMapping("/v1/paketLayanan/fbpsb/{page}/{sort}/{sortby}")

@@ -88,8 +88,8 @@ public class UserService {
             /*EMAIL NOTIFICATION*/
             if(OtherConfig.getFlagSMTPActive().equalsIgnoreCase("y") && !emailForSMTP.equals(""))
             {
-                new ExecuteSMTP().sendSMTPToken(emailForSMTP,"VERIFIKASI TOKEN REGISTRASI",
-                        "TOKEN UNTUK VERIFIKASI EMAIL",String.valueOf(intVerification));
+                new ExecuteSMTP().sendSMTPToken(emailForSMTP,"VERIFIKASI TOKEN GANTI PASSWORD",
+                        "TOKEN BARU UNTUK VERIFIKASI GANTI PASSWORD",String.valueOf(intVerification));
             }
             System.out.println("VERIFIKASI -> "+intVerification);
         }catch (Exception e)
