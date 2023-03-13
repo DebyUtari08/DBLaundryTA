@@ -16,6 +16,28 @@ public class Pelanggan {
     @Column(name = "NamaLengkap")
     private String namaLengkap;
 
+    public String getAlamatLengkap() {
+        return alamatLengkap;
+    }
+
+    public void setAlamatLengkap(String alamatLengkap) {
+        this.alamatLengkap = alamatLengkap;
+    }
+
+    @Column(name = "AlamatLengkap")
+    private String alamatLengkap;
+
+    public String getNoHandphone() {
+        return noHandphone;
+    }
+
+    public void setNoHandphone(String noHandphone) {
+        this.noHandphone = noHandphone;
+    }
+
+    @Column(name = "NoHandphone")
+    private String noHandphone;
+
     public Long getIdPelanggan() {
         return idPelanggan;
     }

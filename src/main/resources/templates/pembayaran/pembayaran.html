@@ -88,7 +88,7 @@
       <button type="button"
               th:data-title="'Add Pembayaran'" onclick="funcHandler(event)"
               th:data-url="'/api/usrmgmnt/v1/pembayaran/new'"
-              class="btn btn-primary" data-toggle="modal" data-target="#addPelanggan">
+              class="btn btn-primary" data-toggle="modal" data-target="#addPembayaran">
         ADD PEMBAYARAN
       </button>
     </div>
@@ -116,7 +116,7 @@
             ID</a>
           </th>
           <th style="text-align: center">
-            <a class="text-light" th:href="@{'/api/usrmgmnt/v1/pelanggan/fbpsb/'
+            <a class="text-light" th:href="@{'/api/usrmgmnt/v1/pembayaran/fbpsb/'
 																			+ ${currentPage}
 																			+ '/'
 																			+ (${#strings.equals(data.get('sort'),'asc')} ? 'desc' : 'asc')
@@ -127,10 +127,10 @@
 																			+ '&sizeComponent='
 																			+ ${sizeComponent}
 																			}"/>
-            PELANGGAN</a>
+            PEMBAYARAN</a>
           </th>
           <th style="text-align: center">
-            <a class="text-light" th:href="@{'/api/usrmgmnt/v1/pelanggan/fbpsb/'
+            <a class="text-light" th:href="@{'/api/usrmgmnt/v1/pembayaran/fbpsb/'
 																			+ ${currentPage}
 																			+ '/'
 																			+ (${#strings.equals(data.get('sort'),'asc')} ? 'desc' : 'asc')

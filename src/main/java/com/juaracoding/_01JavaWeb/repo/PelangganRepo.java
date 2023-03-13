@@ -14,5 +14,7 @@ public interface PelangganRepo extends JpaRepository<Pelanggan,Long> {
 
     List<Pelanggan> findByIsDelete(byte byteIsDelete);
     Page<Pelanggan> findByIsDeleteAndNamaLengkapContainsIgnoreCase(Pageable page , byte byteIsDelete, String values);
+    Page<Pelanggan> findByIsDeleteAndAlamatLengkapContainsIgnoreCase(Pageable page , byte byteIsDelete, String values);
+    Page<Pelanggan> findByIsDeleteAndNoHandphoneContainsIgnoreCase(Pageable page , byte byteIsDelete, String values);
     Page<Pelanggan> findByIsDeleteAndIdPelanggan(Pageable page , byte byteIsDelete, Long values);
 }

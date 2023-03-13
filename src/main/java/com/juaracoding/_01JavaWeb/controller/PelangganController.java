@@ -64,6 +64,8 @@ public class PelangganController {
     {
         mapSorting.put("id","idPelanggan");
         mapSorting.put("nama","namaLengkap");
+        mapSorting.put("alamat","alamatLengkap");
+        mapSorting.put("no","noHandphone");
     }
 
     @GetMapping("/v1/pelanggan/new")

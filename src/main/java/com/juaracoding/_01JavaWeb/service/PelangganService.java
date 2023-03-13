@@ -51,6 +51,9 @@ public class PelangganService {
     {
         mapColumnSearch.put("id","ID PELANGGAN");
         mapColumnSearch.put("nama","NAMA LENGKAP");
+        mapColumnSearch.put("alamat","ALAMAT LENGKAP");
+        mapColumnSearch.put("no","NO HANDPHONE");
+
     }
 
     public Map<String, Object> savePelanggan(Pelanggan pelanggan, WebRequest request) {
@@ -64,6 +67,8 @@ public class PelangganService {
                         HttpStatus.NOT_ACCEPTABLE,null,"FV05001",request);
             }
             pelanggan.setNamaLengkap(pelanggan.getNamaLengkap());
+            pelanggan.setAlamatLengkap(pelanggan.getAlamatLengkap());
+            pelanggan.setNoHandphone(pelanggan.getNoHandphone());
             pelanggan.setCreatedBy(Integer.parseInt(strUserIdz.toString()));
             pelanggan.setCreatedDate(new Date());
             pelangganRepo.save(pelanggan);
@@ -105,6 +110,8 @@ public class PelangganService {
                         "FV05003",request);
             }
             nextPelanggan.setNamaLengkap(pelanggan.getNamaLengkap());
+            nextPelanggan.setAlamatLengkap(pelanggan.getAlamatLengkap());
+            nextPelanggan.setNoHandphone(pelanggan.getNoHandphone());
             nextPelanggan.setModifiedBy(Integer.parseInt(strUserIdz.toString()));
             nextPelanggan.setModifiedDate(new Date());
 
@@ -391,8 +398,11 @@ public class PelangganService {
             return pelangganRepo.findByIsDeleteAndIdPelanggan(pageable,(byte) 1,Long.parseLong(paramValue));
         } else if (paramColumn.equals("nama")) {
             return pelangganRepo.findByIsDeleteAndNamaLengkapContainsIgnoreCase(pageable,(byte) 1,paramValue);
+        }  else if (paramColumn.equals("alamat")) {
+            return pelangganRepo.findByIsDeleteAndAlamatLengkapContainsIgnoreCase(pageable, (byte) 1, paramValue);
+        }  else if (paramColumn.equals("no")) {
+            return pelangganRepo.findByIsDeleteAndNoHandphoneContainsIgnoreCase(pageable, (byte) 1, paramValue);
         }
-
         return pelangganRepo.findByIsDelete(pageable,(byte) 1);// ini default kalau parameter search nya tidak sesuai--- asumsi nya di hit bukan dari web
     }
 
