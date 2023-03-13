@@ -389,7 +389,7 @@ public class PaketLayananService {
         } else if (paramColumn.equals("nama")) {
             return paketLayananRepo.findByIsDeleteAndNamaPaketContainsIgnoreCase(pageable,(byte) 1,paramValue);
         }  else if (paramColumn.equals("harga")) {
-            return paketLayananRepo.findByIsDeleteAndHarga(pageable, (byte) 1, paramValue);
+            return paketLayananRepo.findByIsDeleteAndHarga(pageable, (byte) 1, Double.parseDouble(paramValue) );
         }  else if (paramColumn.equals("tipe")) {
             return paketLayananRepo.findByIsDeleteAndTipeLayananContainsIgnoreCase(pageable, (byte) 1, paramValue);
         }
