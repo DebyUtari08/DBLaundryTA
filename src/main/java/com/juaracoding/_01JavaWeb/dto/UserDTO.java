@@ -10,7 +10,15 @@ import java.time.LocalDate;
 
 public class UserDTO {
 
+    public Long getIdUser() {
+        return idUser;
+    }
 
+    public void setIdUser(Long idUser) {
+        this.idUser = idUser;
+    }
+
+    private Long idUser;
     @NotEmpty(message = ConstantMessage.ERROR_EMAIL_IS_EMPTY)
     @Length(message = ConstantMessage.ERROR_EMAIL_MAX_MIN_LENGTH ,min = 15,max = 50)
     @NotNull(message = ConstantMessage.ERROR_EMAIL_IS_NULL)

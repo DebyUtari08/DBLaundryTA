@@ -62,9 +62,9 @@ public class PaketLayananController {
     private void mapSorting()
     {
         mapSorting.put("id","idListHarga");
-        mapSorting.put("nama","namaPaket");
-        mapSorting.put("harga","hargaPerKilo");
-        mapSorting.put("tipe","tipeLayanan");
+        mapSorting.put("nama","namaLengkap");
+        mapSorting.put("alamat","alamatLengkap");
+        mapSorting.put("no","noHandphone");
     }
 
     @GetMapping("/v1/paketLayanan/new")
@@ -107,7 +107,7 @@ public class PaketLayananController {
     }
     @PostMapping("/v1/paketLayanan/new")
     public String newPaketLayanan(@ModelAttribute(value = "paketLayanan")
-                                  @Valid PaketLayananDTO paketLayananDTO
+                               @Valid PaketLayananDTO paketLayananDTO
             , BindingResult bindingResult
             , Model model
             , WebRequest request
@@ -161,9 +161,9 @@ public class PaketLayananController {
         }
     }
 
-    @PostMapping("/v1/aketLayanan/edit/{id}")
+    @PostMapping("/v1/paketLayanan/edit/{id}")
     public String editPaketLayanan(@ModelAttribute("paketLayanan")
-                                   @Valid PaketLayananDTO paketLayananDTO
+                                @Valid PaketLayananDTO paketLayananDTO
             , BindingResult bindingResult
             , Model model
             , WebRequest request
@@ -228,7 +228,7 @@ public class PaketLayananController {
         model.addAttribute("columnFirst","");
         model.addAttribute("valueFirst","");
         model.addAttribute("sizeComponent",5);
-        return "paketLayanan/paketLayanan";
+        return "/paketLayanan/paketLayanan";
     }
 
     @GetMapping("/v1/paketLayanan/fbpsb/{page}/{sort}/{sortby}")
@@ -247,7 +247,7 @@ public class PaketLayananController {
         Pageable pageable = PageRequest.of(pagez==0?pagez:pagez-1,Integer.parseInt(sizeComponent.equals("")?"5":sizeComponent), sortz.equals("asc")?Sort.by(sortzBy):Sort.by(sortzBy).descending());
         objectMapper = paketLayananService.findByPage(pageable,request,columnFirst,valueFirst);
         mappingAttribute.setAttribute(model,objectMapper,request);
-        model.addAttribute("paketLayanan",new PaketLayananDTO());
+        model.addAttribute("paketLayanan",new PaketLayanan());
         model.addAttribute("currentPage",pagez==0?1:pagez);
         model.addAttribute("sortBy", ManipulationMap.getKeyFromValue(mapSorting,sortzBy));
         model.addAttribute("columnFirst",columnFirst);
@@ -274,4 +274,3 @@ public class PaketLayananController {
         return "redirect:/api/usrmgmnt/v1/paketLayanan/default";
     }
 }
-

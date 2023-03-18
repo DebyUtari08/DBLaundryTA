@@ -4,58 +4,81 @@ import com.juaracoding._01JavaWeb.configuration.OtherConfig;
 import com.juaracoding._01JavaWeb.dto.AksesDTO;
 import com.juaracoding._01JavaWeb.dto.DivisiDTO;
 import com.juaracoding._01JavaWeb.dto.MenuDTO;
+import com.juaracoding._01JavaWeb.dto.MenuHeaderDTO;
 import com.juaracoding._01JavaWeb.model.Akses;
 import com.juaracoding._01JavaWeb.model.Demo;
-import com.juaracoding._01JavaWeb.model.Menu;
+import com.juaracoding._01JavaWeb.model.MenuHeader;
 import com.juaracoding._01JavaWeb.service.AksesService;
 import com.juaracoding._01JavaWeb.service.DivisiService;
 import com.juaracoding._01JavaWeb.service.MenuService;
-import com.juaracoding._01JavaWeb.utils.ConstantMessage;
-import com.juaracoding._01JavaWeb.utils.ManipulationMap;
-import com.juaracoding._01JavaWeb.utils.MappingAttribute;
+import com.juaracoding._01JavaWeb.utils.*;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ResourceUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/api/usrmgmnt")
 public class AksesController {
-
     private AksesService aksesService;
-
     private MenuService menuService;
     private DivisiService divisiService;
-
     @Autowired
     private ModelMapper modelMapper;
-
     private Map<String,Object> objectMapper = new HashMap<String,Object>();
     private Map<String,String> mapSorting = new HashMap<String,String>();
-
-    private List<Akses> lsCPUpload = new ArrayList<Akses>();
-
+    private List<Demo> lsCPUpload = new ArrayList<Demo>();
     private String [] strExceptionArr = new String[2];
-
     private MappingAttribute mappingAttribute = new MappingAttribute();
+    private PdfGeneratorLibre generator = null;
+    private String [][] strBody = null;
+    @Autowired
+    PdfGenaratorUtil pdfGenaratorUtil;//wajib di deklarasikan kalau pakai thymeleaf engine
 
+    private StringBuilder sBuild = new StringBuilder();
     public AksesController(AksesService aksesService, MenuService menuService, DivisiService divisiService) {
-        strExceptionArr[0] = "AksesController";
+        strExceptionArr[0] = "DemoController";
         mapSorting();
         this.aksesService = aksesService;
         this.menuService = menuService;
         this.divisiService = divisiService;
+    }
+
+    private void mapSorting()
+    {
+        mapSorting.put("id","idAkses");
+        mapSorting.put("nama","namaAkses");
     }
 
     @GetMapping("/v1/akses/new")
@@ -71,7 +94,6 @@ public class AksesController {
         model.addAttribute("akses", new AksesDTO());
         model.addAttribute("listDivisi", divisiService.getAllDivisi());//untuk parent nya
         model.addAttribute("listMenu", menuService.getAllMenu());//untuk parent nya
-
         return "akses/create_akses";
     }
 
@@ -92,23 +114,24 @@ public class AksesController {
         {
             AksesDTO aksesDTOForSelect = (AksesDTO) objectMapper.get("data");
             List<DivisiDTO> listDivisi = divisiService.getAllDivisi();
-            List<MenuDTO> listMenu = menuService.getAllMenu();
+            List<MenuDTO> listMenuDTO = menuService.getAllMenu();
 
-//            List<MenuDTO> selectedMenuDTO = new ArrayList<MenuDTO>();
-//            for (MenuDTO menuDTO:
-//                 listMenuDTO) {
-//                for (MenuDTO menuz:
-//                        aksesDTOForSelect.getListMenuAkses()) {
-//                    if(menuDTO.getIdMenu()==menuz.getIdMenu())
-//                    {
-//                        selectedMenuDTO.add(menuz);
-//                    }
-//                }
-//            }
-//            Set<Long> menuSelected = selectedMenuDTO.stream().map(MenuDTO::getIdMenu).collect(Collectors.toSet());
+            List<MenuDTO> selectedMenuDTO = new ArrayList<MenuDTO>();
+            for (MenuDTO menuDTO:
+                    listMenuDTO) {
+                for (MenuDTO menuz:
+                        aksesDTOForSelect.getListMenuAkses()) {
+                    if(menuDTO.getIdMenu()==menuz.getIdMenu())
+                    {
+                        selectedMenuDTO.add(menuz);
+                    }
+                }
+            }
+            Set<Long> menuSelected = selectedMenuDTO.stream().map(MenuDTO::getIdMenu).collect(Collectors.toSet());
             model.addAttribute("akses", aksesDTOForSelect);
             model.addAttribute("listDivisi", listDivisi);//untuk parent nya
-            model.addAttribute("listMenu", listMenu);//untuk parent nya
+            model.addAttribute("listMenu", listMenuDTO);//untuk parent nya
+            model.addAttribute("menuSelected", menuSelected);//untuk parent nya
             if(aksesDTOForSelect.getDivisi() != null)
             {
                 model.addAttribute("selectedValues", aksesDTOForSelect.getDivisi().getIdDivisi());//yang akan diselect saat modals muncul
@@ -124,7 +147,7 @@ public class AksesController {
     }
     @PostMapping("/v1/akses/new")
     public String newAkses(@ModelAttribute(value = "akses")
-                          @Valid Akses aksesDTO
+                           @Valid Akses aksesDTO
             , BindingResult bindingResult
             , Model model
             , WebRequest request
@@ -185,13 +208,18 @@ public class AksesController {
 
     @PostMapping("/v1/akses/edit/{id}")
     public String editAkses(@ModelAttribute("akses")
-                          @Valid Akses akses
+                            @Valid Akses akses
             , BindingResult bindingResult
             , Model model
             , WebRequest request
             , @PathVariable("id") Long id
     )
     {
+        akses.setIdAkses(id);
+        if(akses.getListMenuAkses()==null)
+        {
+            mappingAttribute.setErrorMessage(bindingResult,"HARAP PILIH MENU LIST ");
+        }
         if(OtherConfig.getFlagSessionValidation().equals("y"))
         {
             if(request.getAttribute("USR_ID",1)==null){
@@ -317,9 +345,10 @@ public class AksesController {
 
         for (int i=0;i<listMenu.size();i++)
         {
+            MenuHeaderDTO mHeader = listMenu.get(i).getMenuHeader();
             arrContent[i][0] = listMenu.get(i).getIdMenu().toString();
             arrContent[i][1] = listMenu.get(i).getNamaMenu().toString();
-            arrContent[i][2] = listMenu.get(i).getMenuHeader().getNamaMenuHeader();
+            arrContent[i][2] = mHeader==null?"":mHeader.getNamaMenuHeader();
         }
         model.addAttribute("arrColumnTitle",arrColumnTitle);
         model.addAttribute("arrContent",arrContent);
@@ -345,9 +374,124 @@ public class AksesController {
         return "redirect:/api/usrmgmnt/v1/akses/default";
     }
 
-    private void mapSorting()
-    {
-        mapSorting.put("id","idAkses");
-        mapSorting.put("nama","namaAkses");
+
+
+    @GetMapping("/v1/akses/xportpdflibre")
+    public void exportToPDFLibre(
+            Model model,
+            @RequestParam String columnFirst,
+            @RequestParam String valueFirst,
+            WebRequest request,
+            HttpServletResponse response
+    ){
+        mappingAttribute.setAttribute(model,request);//untuk set session ke attribut
+        List<AksesDTO> listAksesDTO= aksesService.dataToExport(request,columnFirst,valueFirst);
+        response.setContentType("application/pdf");
+        DateFormat dateFormat = new SimpleDateFormat("YYYYMMDDHHMMSS.sss");
+        String currentDateTime = dateFormat.format(new Date());
+        String headerkey = "Content-Disposition";
+        sBuild.setLength(0);
+        String headervalue = sBuild.append("attachment; filename=akseslist").
+                append(currentDateTime).append(".pdf").toString();
+        response.setHeader(headerkey, headervalue);
+        generator = new PdfGeneratorLibre();
+        int intStrHeader=4;// INI YANG DIRUBAH SESUAIKAN DENGAN JUMLAH KOLOM
+        String[] strHeader = new String[intStrHeader];
+        /*
+            DEFINISIKAN KOLOM NYA DISINI HARUS SESUAI JUMLAH NYA DENGAN HEADER YANG DI SET DI VARIABEL intStrHeader
+         */
+        strHeader[0] ="ID";
+        strHeader[1] ="AKSES";
+        strHeader[2] ="DIVISI";
+        strHeader[3] ="KODE DIVISI";
+        int intListAksesDTO = listAksesDTO.size();
+        strBody = new String[intListAksesDTO][intStrHeader];
+        String strNamaDivisi = "";
+        String strKodeDivisi = "";
+
+        for(int i=0;i<listAksesDTO.size();i++)
+        {
+            /*
+                INI KALIAN MAPPING TAPI HATI2 DENGAN OBJECT, HARUS DI HANDLE NULL NYA
+             */
+
+            strNamaDivisi = listAksesDTO.get(i).getDivisi()==null?"-":listAksesDTO.get(i).getDivisi().getNamaDivisi();
+            strKodeDivisi = listAksesDTO.get(i).getDivisi()==null?"-":listAksesDTO.get(i).getDivisi().getKodeDivisi();
+            strBody[i][0] = String.valueOf(listAksesDTO.get(i).getIdAkses());
+            strBody[i][1] = listAksesDTO.get(i).getNamaAkses();
+            strBody[i][2] = strNamaDivisi;
+            strBody[i][3] = strKodeDivisi;
+        }
+
+        sBuild.setLength(0);
+        generator.generate(sBuild.
+                append("LIST AKSES \n").//JUDUL REPORT
+                        append("total data : ").append(intListAksesDTO).//VARIABEL TOTAL DATA
+                        toString(),strHeader,strBody, response);
+    }
+
+    @GetMapping("/v1/akses/xportpdfthyme")
+    public ResponseEntity  exportToPDFThyme(
+            Model model,
+            @RequestParam String columnFirst,
+            @RequestParam String valueFirst,
+            WebRequest request,
+            HttpServletResponse response
+    ){
+        Resource resource = null;
+        try {
+
+            mappingAttribute.setAttribute(model,request);//untuk set session ke attribut
+            String property = OtherConfig.getPathThymeleafTemplateReport();
+            String tempDir = System.getProperty(property);
+            List<AksesDTO> listAksesDTO= aksesService.dataToExport(request,columnFirst,valueFirst);
+            sBuild.setLength(0);
+            String fileName = sBuild.append(tempDir).append(OtherConfig.getPathSeparatorReport()).append(UUID.randomUUID().toString()).append(".pdf").toString();
+            Map<String,Object> data = new HashMap<String,Object>();
+            data.put("content",listAksesDTO);
+            pdfGenaratorUtil.createPdf("reportz/thymeleaf_template_akses",data,fileName);
+            Path path = Paths.get(fileName);
+            resource = new UrlResource(path.toUri());
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        sBuild.setLength(0);
+        return ResponseEntity.ok()
+
+                .contentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE))
+                .header(HttpHeaders.CONTENT_DISPOSITION, sBuild.append("attachment; filename=\"")
+                        .append(resource.getFilename()).append("\"").toString())
+                .body(resource);
+    }
+
+    @GetMapping("/v1/akses/xportpdfjasper")
+    public void exportToPDFJasper(
+            Model model,
+            @RequestParam String columnFirst,
+            @RequestParam String valueFirst,
+            WebRequest request,
+            HttpServletResponse response
+    ){
+        try
+        {
+            mappingAttribute.setAttribute(model,request);//untuk set session ke attribut
+            String sourceFileName = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "\\data\\reportz\\Akses_Report.jasper").getAbsolutePath();
+            List<AksesDTO> listAksesDTO = aksesService.dataToExport(request,columnFirst,valueFirst);
+            JRBeanCollectionDataSource beanColDataSource = new JRBeanCollectionDataSource(listAksesDTO);
+            Map parameters = new HashMap();
+            parameters.put("hue","VARIABEL - hue 1");
+            parameters.put("hue2","VARIABEL hue 2");
+            parameters.put("pageHead","PAGE HEADER TEST !!");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(sourceFileName, parameters, beanColDataSource);
+            JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
+            response.setContentType("application/pdf");
+            response.addHeader("Content-Disposition", "inline; filename=jasper.pdf;");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
     }
 }

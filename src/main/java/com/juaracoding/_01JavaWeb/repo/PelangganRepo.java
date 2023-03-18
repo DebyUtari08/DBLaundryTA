@@ -1,6 +1,5 @@
 package com.juaracoding._01JavaWeb.repo;
 
-import com.juaracoding._01JavaWeb.model.Divisi;
 import com.juaracoding._01JavaWeb.model.Pelanggan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

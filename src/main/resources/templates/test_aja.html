@@ -77,13 +77,6 @@
                 <li th:text="${childArrays.strStringTestwo}"/>
         </ul>
 
-<!--        <ul th:each="childArrays:${data.get('searchParam')}" >-->
-<!--            <th:block th:each="${childElement:childArrays.value}"/>-->
-<!--            <li th:text="${childArrays.key}"/>-->
-<!--            <li th:text="${childArrays.value}"/>-->
-<!--            <th:block th:text="$(childArrays.get('currentPage')"/>-->
-<!--        </ul>-->
-
         <select name="columnFirst"
                 class="size-select"
                 id="columnFirst">
@@ -98,36 +91,9 @@
             <label id="cumix"/>
         </div>
 
-<!--        ${totalItems}-->
-<!--        ${numberOfElements}-->
-<!--        ${searchParam.get('path')}-->
-<!--        ${searchParam.get('nama')}-->
-<!--        ${searchParam.get('point')}-->
-
-<!--        ${sort.strStringTestThree}-->
-<!--        ${sort.namaSubMenu}-->
-<!--        ${sort.idSubMenu}-->
-<!--        ${sort.linkSubMenu}-->
-<!--        ${content.get(0).strStringTestwo}-->
-<!--        th:each="varX.varY : content" ${varX.get(varY.index).strStringTestwo}"-->
-
-
-
         <div>
             <th:block th:text="'INI STR STRING THREE : '+${data.sort.strStringTestThree}"></th:block>
         </div>
-
-<!--        for(int i=0;i<listUser.size();i++)-->
-<!--        {-->
-<!--        listUser.get(i).getAkses().getNamaAkses();-->
-<!--        listUser.get(i).getAkses().getDivisi().getNamaDivisi();-->
-<!--        listUser.get(i).getAkses().getListMenuAkses().get(i).getMenuHeader().getNamaMenuHeader();-->
-
-<!--        }-->
-<!--        <th:block th:each="x,y:${data.get('listUser')}"></th:block>-->
-<!--                <th:blok th:text="x.get(y.index).akses.namaAkses"></th:blok>-->
-<!--                <th:blok th:text="x.get(y.index).akses.divisi.namaDivisi"></th:blok>-->
-<!--                <th:blok th:text="x.get(y.index).akses.listMenuAkses.menuheader.namaMenuHeader"></th:blok>-->
 
         <div>
             <th:block th:text="'INI NAMA SUB MENU : '+${data.sort.namaSubMenu}"></th:block>
@@ -174,6 +140,8 @@
             </tr>
         </tbody>
     </table>
+
+<a th:href="@{localhost:8081}">LINK</a>
 
 </body>
 </html>

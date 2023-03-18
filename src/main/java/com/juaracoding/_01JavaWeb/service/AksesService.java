@@ -8,6 +8,7 @@ import com.juaracoding._01JavaWeb.handler.ResourceNotFoundException;
 import com.juaracoding._01JavaWeb.handler.ResponseHandler;
 import com.juaracoding._01JavaWeb.model.Akses;
 import com.juaracoding._01JavaWeb.model.Demo;
+import com.juaracoding._01JavaWeb.model.Menu;
 import com.juaracoding._01JavaWeb.repo.AksesRepo;
 import com.juaracoding._01JavaWeb.utils.ConstantMessage;
 import com.juaracoding._01JavaWeb.utils.LoggingFile;
@@ -251,6 +252,44 @@ public class AksesService {
                         request);
     }
 
+    public List<AksesDTO> dataToExport(WebRequest request,String columFirst,String valueFirst)
+    {
+        List<Akses> listAkses = null;
+        List<AksesDTO> listAksesDTO = null;
+        Map<String,Object> mapResult = null;
+
+        try
+        {
+            if(columFirst.equals("id"))
+            {
+                try
+                {
+                    Long.parseLong(valueFirst);
+                }
+                catch (Exception e)
+                {
+                    strExceptionArr[1] = "dataToExport(WebRequest request,String columFirst,String valueFirst) --- LINE 209";
+                    LoggingFile.exceptionStringz(strExceptionArr, e, OtherConfig.getFlagLogging());
+                    return new ArrayList<AksesDTO>();
+                }
+            }
+            listAkses = getDataToExport(columFirst,valueFirst);
+            if(listAkses.size()==0)
+            {
+                return new ArrayList<AksesDTO>();
+            }
+            listAksesDTO = modelMapper.map(listAkses, new TypeToken<List<AksesDTO>>() {}.getType());
+        }
+
+        catch (Exception e)
+        {
+            strExceptionArr[1] = "dataToExport(WebRequest request,String columFirst,String valueFirst) --- LINE 243";
+            LoggingFile.exceptionStringz(strExceptionArr, e, OtherConfig.getFlagLogging());
+            return new ArrayList<AksesDTO>();
+        }
+        return listAksesDTO;
+    }
+
     public Map<String,Object> findById(Long idAkses, WebRequest request)
     {
         Akses akses = aksesRepo.findById(idAkses).orElseThrow (
@@ -261,7 +300,7 @@ public class AksesService {
             return new ResponseHandler().generateModelAttribut(ConstantMessage.WARNING_AKSES_NOT_EXISTS,
                     HttpStatus.NOT_ACCEPTABLE,
                     transformToDTO.transformObjectDataEmpty(objectMapper,mapColumnSearch),
-                    "FV04005",request);
+                    "FV04007",request);
         }
         AksesDTO aksesDTO = modelMapper.map(akses, new TypeToken<AksesDTO>() {}.getType());
         return new ResponseHandler().
@@ -286,14 +325,14 @@ public class AksesService {
                 return new ResponseHandler().generateModelAttribut(ConstantMessage.WARNING_AKSES_NOT_EXISTS,
                         HttpStatus.NOT_ACCEPTABLE,
                         transformToDTO.transformObjectDataEmpty(objectMapper,mapColumnSearch),
-                        "FV04006",request);
+                        "FV04008",request);
             }
             if(strUserIdz==null)
             {
                 return new ResponseHandler().generateModelAttribut(ConstantMessage.ERROR_FLOW_INVALID,
                         HttpStatus.NOT_ACCEPTABLE,
                         null,
-                        "FV04007",request);
+                        "FV04009",request);
             }
             nextAkses.setIsDelete((byte)0);
             nextAkses.setModifiedBy(Integer.parseInt(strUserIdz.toString()));
@@ -333,6 +372,45 @@ public class AksesService {
         }
 
         return aksesRepo.findByIsDelete(pageable,(byte) 1);
+    }
+    private List<Akses> getDataToExport(String paramColumn, String paramValue)
+    {
+        if(paramValue.equals(""))
+        {
+            return aksesRepo.findByIsDelete((byte) 1);
+        }
+        if(paramColumn.equals("id"))
+        {
+            return aksesRepo.findByIsDeleteAndIdAkses((byte) 1,Long.parseLong(paramValue));
+        } else if (paramColumn.equals("nama")) {
+            return aksesRepo.findByIsDeleteAndNamaAksesContainsIgnoreCase((byte) 1,paramValue);
+        }
+
+        return aksesRepo.findByIsDelete((byte) 1);
+    }
+
+    public List<AksesDTO> getAllAkses()//KHUSUS UNTUK FORM INPUT SAJA
+    {
+        List<AksesDTO> listAksesDTO = null;
+        Map<String,Object> mapResult = null;
+        List<Akses> listAkses = null;
+
+        try
+        {
+            listAkses = aksesRepo.findByIsDelete((byte)1);
+            if(listAkses.size()==0)
+            {
+                return new ArrayList<AksesDTO>();
+            }
+            listAksesDTO = modelMapper.map(listAkses, new TypeToken<List<AksesDTO>>() {}.getType());
+        }
+        catch (Exception e)
+        {
+            strExceptionArr[1] = "getAllAkses()/ --- LINE 356";
+            LoggingFile.exceptionStringz(strExceptionArr, e, OtherConfig.getFlagLogging());
+            return listAksesDTO;
+        }
+        return listAksesDTO;
     }
 
 }

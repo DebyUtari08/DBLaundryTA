@@ -3,7 +3,9 @@ package com.juaracoding._01JavaWeb.controller;
 
 import com.juaracoding._01JavaWeb.configuration.OtherConfig;
 import com.juaracoding._01JavaWeb.dto.MenuDTO;
+import com.juaracoding._01JavaWeb.dto.MenuHeaderDTO;
 import com.juaracoding._01JavaWeb.model.Menu;
+import com.juaracoding._01JavaWeb.model.MenuHeader;
 import com.juaracoding._01JavaWeb.service.MenuHeaderService;
 import com.juaracoding._01JavaWeb.service.MenuService;
 import com.juaracoding._01JavaWeb.utils.ConstantMessage;
@@ -88,9 +90,10 @@ public class MenuController {
             model.addAttribute("menu", menuDTO);
             model.addAttribute("listMenuHeader", menuHeaderService.getAllMenuHeader());
 //            System.out.println("selectedValues -> "+menuDTOForSelect.getMenuHeader().getIdMenuHeader());
-            model.addAttribute("selectedValues", menuDTOForSelect.getMenuHeader().getIdMenuHeader());
+            MenuHeaderDTO menuHeaderDTO = menuDTOForSelect.getMenuHeader();
+            String strSelected = menuHeaderDTO==null?"null":menuHeaderDTO.getIdMenuHeader().toString();
+            model.addAttribute("selectedValues", strSelected);
             return "menu/edit_menu";
-
         }
         else
         {
@@ -106,6 +109,14 @@ public class MenuController {
             , WebRequest request
     )
     {
+
+        MenuHeaderDTO menuHeaderDTO = menuDTO.getMenuHeader();
+        String strIdMenuHeaderz = menuHeaderDTO==null?null:String.valueOf(menuHeaderDTO.getIdMenuHeader());
+        if(strIdMenuHeaderz==null || strIdMenuHeaderz.equals("null") || strIdMenuHeaderz.equals(""))
+        {
+            mappingAttribute.setErrorMessage(bindingResult,"GROUP MENU WAJIB DIPILIH !!");
+        }
+
         if(OtherConfig.getFlagSessionValidation().equals("y"))
         {
             mappingAttribute.setAttribute(model,objectMapper,request);//untuk set session
@@ -158,7 +169,6 @@ public class MenuController {
             mappingAttribute.setAttribute(model,objectMapper);
             model.addAttribute("message","DATA BERHASIL DISIMPAN");
             Long idDataSave = objectMapper.get("idDataSave")==null?1:Long.parseLong(objectMapper.get("idDataSave").toString());
-//            return "redirect:/api/usrmgmnt/v1/menu/default";
             return "redirect:/api/usrmgmnt/v1/menu/fbpsb/0/asc/idMenu?columnFirst=idMenu&valueFirst="+idDataSave+"&sizeComponent=5";//LANGSUNG DITAMPILKAN FOKUS KE HASIL EDIT USER TADI
         }
         else
@@ -166,25 +176,33 @@ public class MenuController {
             mappingAttribute.setErrorMessage(bindingResult,objectMapper.get("message").toString());
             model.addAttribute("listMenuHeader", menuHeaderService.getAllMenuHeader());
             model.addAttribute("menu",new MenuDTO());
-            model.addAttribute("status","error");
             return "menu/create_menu";
         }
     }
 
     @PostMapping("/v1/menu/edit/{id}")
     public String editMenu(@ModelAttribute("menu")
-                          @Valid MenuDTO menuDTO
+                           @Valid MenuDTO menuDTO
             , BindingResult bindingResult
             , Model model
             , WebRequest request
             , @PathVariable("id") Long id
     )
     {
+        menuDTO.setIdMenu(id);
+        MenuHeaderDTO menuHeaderDTO = menuDTO.getMenuHeader();
+        String strIdMenuHeaderz = menuHeaderDTO==null?null:String.valueOf(menuHeaderDTO.getIdMenuHeader());
+        if(strIdMenuHeaderz==null || strIdMenuHeaderz.equals("null") || strIdMenuHeaderz.equals(""))
+        {
+            mappingAttribute.setErrorMessage(bindingResult,"GROUP MENU WAJIB DIPILIH !!");
+        }
+
         /* START VALIDATION */
         if(bindingResult.hasErrors())
         {
             model.addAttribute("menu",menuDTO);
             model.addAttribute("listMenuHeader", menuHeaderService.getAllMenuHeader());
+            model.addAttribute("selectedValues", "null");
             return "menu/edit_menu";
         }
         Boolean isValid = true;

@@ -35,6 +35,6 @@ public class MainController {
             mappingAttribute.setAttribute(model,objectMapper,request);
             return "index_1";
         }
-        return "authz_signin";
+        return "authz/authz_signin";
     }
 }

@@ -12,27 +12,40 @@ import java.util.List;
 public class MenuDTO {
 
     private Long idMenu;
-//    @NotNull
-//    @NotEmpty
+
+
+    /*
+       validasi field namaMenu not null not empty
+       length max 25
+    */
+    @NotNull
+    @NotEmpty
     @Length(message = ConstantMessage.WARNING_MENU_NAME_LENGTH,max = 25)
     private String namaMenu;
 
 
-//    @NotNull
-//    @NotEmpty
+    /*
+       validasi field pathMenu not null not empty
+       length max 50
+    */
+    @NotNull
+    @NotEmpty
     @Length(message = ConstantMessage.WARNING_MENU_NAME_LENGTH,max = 50)
     private String pathMenu;
 
-//    @NotNull
-//    @NotEmpty
+    /*
+      validasi field endPoint not null not empty
+      length max 50
+   */
+    @NotNull
+    @NotEmpty
     @Length(message = ConstantMessage.WARNING_MENU_NAME_LENGTH,max = 50)
     private String endPoint;
 
 
-//    @JsonIgnoreProperties("listMenuAkses")
+    //    @JsonIgnoreProperties("listMenuAkses")
     private List<AksesDTO> listAksesMenu;
 
-//    @NotNull
     private MenuHeaderDTO menuHeader;
 
     public Long getIdMenu() {

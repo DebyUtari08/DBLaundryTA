@@ -2,6 +2,8 @@ package com.juaracoding._01JavaWeb.model;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +19,8 @@ public class Akses {
     @Column(name = "IDAkses")
     private Long idAkses;
 
+    @NotNull
+    @NotEmpty
     @Column(name = "NamaAkses")
     private String namaAkses;
 

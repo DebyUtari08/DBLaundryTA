@@ -11,7 +11,6 @@ Version 1.0
 
 import com.juaracoding._01JavaWeb.configuration.OtherConfig;
 import com.juaracoding._01JavaWeb.dto.PelangganDTO;
-import com.juaracoding._01JavaWeb.model.Divisi;
 import com.juaracoding._01JavaWeb.model.Pelanggan;
 import com.juaracoding._01JavaWeb.service.PelangganService;
 import com.juaracoding._01JavaWeb.utils.ConstantMessage;

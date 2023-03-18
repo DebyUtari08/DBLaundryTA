@@ -1,46 +1,35 @@
-<form th:action="@{/api/mgmnt/v1/paketlayanan/new}" th:object = "${paketLayanan}" method="POST" id="buatPaketlayanan"><!--	ID FORM TIDAK BOLEH SAMA DENGAN ID MODALS DI FRAGMENT -->
-  <input type="hidden" value="914d6b9f560ce84d5d60bfec91f6c7e6a95cb022d34dc62b32293a62c47120d9" /><!-- form generate id security of front end -->
+<form th:action="@{/api/usrmgmnt/v1/paketLayanan/new}" th:object = "${divisi}" method="POST" id="buatDivisi"><!--	ID FORM TIDAK BOLEH SAMA DENGAN ID MODALS DI FRAGMENT -->
+  <input type="hidden" value="29ae60353c6fd341d2bc2022124ae8a9" /><!-- form generate id security of front end -->
 
   <div th:if="${#fields.hasErrors('global')}" class="error-box error-danger" >
     <p th:each="err : ${#fields.errors('global')}" th:text="${err}"  class="error"/>
   </div>
   <div class ="form-group">
-    <label> Nama Paket Layanan </label>
+    <label> Nama Menu </label>
     <input
             type = "text"
-            name = "berat"
-            th:field = "*{namaPaket}"
+            name = "namaDivisi"
+            th:field = "*{namaDivisi}"
             class = "form-control"
-            placeholder="Masukkan Paket Layanan"
+            placeholder="Masukkan Nama Divisi"
     />
     <ul>
-      <li th:each="err : ${#fields.errors('namaPaket')}" th:text="${err}" class="error" />
+      <li th:each="err : ${#fields.errors('namaDivisi')}" th:text="${err}" class="error" />
     </ul>
   </div>
-  <div class ="form-group">
-    <label> Harga Per Kilo </label>
-    <input
-            type = "text"
-            name = "berat"
-            th:field = "*{hargaPerKilo}"
-            class = "form-control"
-            placeholder="Masukkan Harga"
-    />
-    <ul>
-      <li th:each="err : ${#fields.errors('hargaPerKilo')}" th:text="${err}" class="error" />
-    </ul>
+
   </div>
   <div class ="form-group">
-    <label> Tipe Paket Layanan </label>
+    <label> Kode Divisi </label>
     <input
             type = "text"
-            name = "berat"
-            th:field = "*{tipeLayanan}"
+            name = "kodeDivisi"
+            th:field = "*{kodeDivisi}"
             class = "form-control"
-            placeholder="Masukkan Tipe Paket Layanan"
+            placeholder="Masukkan Kode Divisi"
     />
     <ul>
-      <li th:each="err : ${#fields.errors('tipeLayanan')}" th:text="${err}" class="error" />
+      <li th:each="err : ${#fields.errors('kodeDivisi')}" th:text="${err}" class="error" />
     </ul>
   </div>
 
@@ -55,7 +44,7 @@
 <script th:inline="javascript">
 /*<![CDATA[*/
 
-    $("#buatPaketlayanan").submit(function(event) {
+    $("#buatPaketLayanan").submit(function(event) {
           event.preventDefault(); //prevent default action
           let post_url = $(this).attr("action"); //get form action url
           let request_method = $(this).attr("method"); //get form GET/POST method
@@ -65,7 +54,7 @@
               type: request_method,
               data: form_data
             }).done(function(response) { //
-            let pattern = /914d6b9f560ce84d5d60bfec91f6c7e6a95cb022d34dc62b32293a62c47120d9/i;
+            let pattern = /29ae60353c6fd341d2bc2022124ae8a9/i;
 			let result = response.match(pattern);
             if(result)
             {
@@ -73,7 +62,7 @@
             }
             else
             {
-				$('#addPaketlayanan').modal('hide');
+				$('#addPaketLayanan').modal('hide');
 				confirm("DATA BERHASIL DISIMPAN");
             }
 
@@ -82,4 +71,3 @@
 
 /*]]>*/
 </script>
-

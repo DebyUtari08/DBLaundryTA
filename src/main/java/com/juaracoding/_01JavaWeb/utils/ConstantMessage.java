@@ -163,7 +163,12 @@ public class ConstantMessage {
         PESANAN
      */
     public final static String WARNING_PESANAN_NOT_EXISTS = "PESANAN TIDAK DOTEMUKAN";
+    /*
+    user
+     */
 
-
+    public final static String WARNING_USER_NOT_EXISTS = "USER TIDAK DOTEMUKAN";
+    public final static String VERIFY_LINK_VALID = "LINK VERIFIKASI VALID";
+    public final static String USER_IS_ACTIVE = "USER SUDAH AKTIF";
 
 }

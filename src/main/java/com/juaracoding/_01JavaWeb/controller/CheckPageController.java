@@ -32,7 +32,7 @@ public class CheckPageController {
         users.setCaptcha("");
         users.setImage(CaptchaUtils.encodeBase64(captcha));
         model.addAttribute("usr",users);
-        return "authz_signin";
+        return "authz/authz_signin";
     }
 
     @GetMapping("/register")
@@ -40,14 +40,14 @@ public class CheckPageController {
     {
         UserDTO users = new UserDTO();
         model.addAttribute("usr",users);
-        return "authz_register";
+        return "authz/authz_register";
     }
 
     @GetMapping("/verify")
     public String pageThree(Model model)
     {
         model.addAttribute("usr",new Userz());
-        return "authz_verifikasi";
+        return "authz/authz_verifikasi";
     }
 
     @GetMapping("/index1")
@@ -57,25 +57,13 @@ public class CheckPageController {
         return "index_1";
 
     }
-    @GetMapping("/styledPage")
-    public String pageFive(Model model)
-    {
-        model.addAttribute("name", "Paulo");
-        return "styledPage";
-    }
-
-    @GetMapping("/index")
-    public String pageSix()
-    {
-        return "index";
-    }
 
     @GetMapping("/forgetpwd")
     public String pageSeven(Model model)
     {
         ForgetPasswordDTO forgetPasswordDTO = new ForgetPasswordDTO();
         model.addAttribute("forgetpwd",forgetPasswordDTO);
-        return "authz_forget_pwd_email";
+        return "authz/authz_forget_pwd_email";
     }
 
     @GetMapping("/logout")

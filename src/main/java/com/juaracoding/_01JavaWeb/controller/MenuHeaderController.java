@@ -96,7 +96,7 @@ public class MenuHeaderController {
 
     @PostMapping("/v1/menuheader/new")
     public String newMenuHeader(@ModelAttribute(value = "menuHeader")
-                            @Valid MenuHeaderDTO menuHeaderDTO
+                                @Valid MenuHeaderDTO menuHeaderDTO
             , BindingResult bindingResult
             , Model model
             , WebRequest request
@@ -152,7 +152,7 @@ public class MenuHeaderController {
 
     @PostMapping("/v1/menuheader/edit/{id}")
     public String editMenuHeader(@ModelAttribute("menuHeader")
-                           @Valid MenuHeaderDTO menuHeaderDTO
+                                 @Valid MenuHeaderDTO menuHeaderDTO
             , BindingResult bindingResult
             , Model model
             , WebRequest request
